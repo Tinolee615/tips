@@ -1,19 +1,30 @@
 /**
   vue.config.js
 */
+/**
+  第一种方式
+  fs模块读取文件信息
+*/
 const fs = require('fs);
 var gitHEAD = fs.readFileSync('.git/HEAD', 'utf-8').trim();//获取当前git仓库分支路径  ref: refs/heads/develop
 var ref = gitHEAD.split(': ')[1]; // refs/heads/develop
-var develop = gitHEAD.split('/')[2]; // develop
-var gitVersion = fs.readFileSync('.git/' + ref, 'utf-8').trim() // git版本号 1441d780b6dba94135313df0c2e0a5f1e2eafdd3
-console.log(gitHEAD,ref,develop,gitVersion);
+var GIT_BRANCH_NAME = gitHEAD.split('/')[2]; // develop
+var GIT_COMMIT_VERSION = fs.readFileSync('.git/' + ref, 'utf-8').trim() // git版本号 1441d780b6dba94135313df0c2e0a5f1e2eafdd3
+
+/**
+  第二种方式
+  child_process的execSync函数可执行系统命令 git rev-parse HEAD获取git版本号 git rev-parse --abbrev-ref HEAD获取当前分支名
+*/
+const execSync = require('child_process').execSync;
+GIT_COMMIT_VERSION = execSync('git rev-parse HEAD').toString().replace(/\n/g,'')
+GIT_BRANCH_NAME = execSync('git rev-parse --abbrev-ref HEAD').toString().replace(/\n/g,'')
 
 /**
   暴露版本号全局变量
 */
 
 config.plugins.push(new webpack.DefinePlugin({
-    'GIT_VERSION':JSON.stringify(`${ref}\:${gitVersion}`) // refs/heads/develop:1441d780b6dba94135313df0c2e0a5f1e2eafdd3
+    'GIT_VERSION':JSON.stringify(`${GIT_BRANCH_NAME}\:${GIT_COMMIT_VERSION}`) // refs/heads/develop:1441d780b6dba94135313df0c2e0a5f1e2eafdd3
 }))
 
 /**
@@ -21,6 +32,6 @@ config.plugins.push(new webpack.DefinePlugin({
 */
 
 注意：
-  `${ref}\:${gitVersion}`必须用JSON.stringify() 或者 '"变量"' 处理
+  `${GIT_BRANCH_NAME}\:${GIT_COMMIT_VERSION}`必须用JSON.stringify() 或者 '"变量"' 处理
   
 
