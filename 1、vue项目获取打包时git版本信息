@@ -1,0 +1,26 @@
+/**
+  vue.config.js
+*/
+const fs = require('fs);
+var gitHEAD = fs.readFileSync('.git/HEAD', 'utf-8').trim();//获取当前git仓库分支路径  ref: refs/heads/develop
+var ref = gitHEAD.split(': ')[1]; // refs/heads/develop
+var develop = gitHEAD.split('/')[2]; // develop
+var gitVersion = fs.readFileSync('.git/' + ref, 'utf-8').trim() // git版本号 1441d780b6dba94135313df0c2e0a5f1e2eafdd3
+console.log(gitHEAD,ref,develop,gitVersion);
+
+/**
+  暴露版本号全局变量
+*/
+
+config.plugins.push(new webpack.DefinePlugin({
+    'GIT_VERSION':JSON.stringify(`${ref}\:${gitVersion}`) // refs/heads/develop:1441d780b6dba94135313df0c2e0a5f1e2eafdd3
+}))
+
+/**
+ 项目中可直接访问 GIT_VERSION 变量
+*/
+
+注意：
+  `${ref}\:${gitVersion}`必须用JSON.stringify() 或者 '"变量"' 处理
+  
+
