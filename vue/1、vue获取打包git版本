@@ -18,6 +18,7 @@ var GIT_COMMIT_VERSION = fs.readFileSync('.git/' + ref, 'utf-8').trim() // git�
 const execSync = require('child_process').execSync;
 GIT_COMMIT_VERSION = execSync('git rev-parse HEAD').toString().replace(/\n/g,'')
 GIT_BRANCH_NAME = execSync('git rev-parse --abbrev-ref HEAD').toString().replace(/\n/g,'')
+GIT_INFO = execSync('git show -s').toString().replace(/\n/g,'')
 
 /**
   暴露版本号全局变量
